@@ -1,0 +1,28 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build image
+      run: docker build -t wirehall/docker-jdk-mvn .
+
+    - name: Log into registry
+      run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+    - name: Push image
+      run: |
+        VERSION="latest"
+
+        echo VERSION=$VERSION
+
+        docker push wirehall/docker-jdk-mvn:$VERSION
